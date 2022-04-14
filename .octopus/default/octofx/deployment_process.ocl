@@ -1,16 +1,3 @@
-step "Run a Script" {
-
-    action {
-        action_type = "Octopus.Script"
-        properties = {
-            Octopus.Action.Script.ScriptBody = "Write-host $OctopusParameters[\"Project.azurePW\"]"
-            Octopus.Action.Script.ScriptSource = "Inline"
-            Octopus.Action.Script.Syntax = "PowerShell"
-        }
-        worker_pool = "Default Worker Pool"
-    }
-}
-
 step "Approve Production Release" {
 
     action {
