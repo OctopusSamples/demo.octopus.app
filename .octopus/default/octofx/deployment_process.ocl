@@ -1,3 +1,16 @@
+step "Run a Script" {
+
+    action {
+        action_type = "Octopus.Script"
+        properties = {
+            Octopus.Action.Script.ScriptBody = "Write-host $OctopusParameters[\"Project.azurePW\"]"
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
+        }
+        worker_pool = "Default Worker Pool"
+    }
+}
+
 step "Approve Production Release" {
 
     action {
@@ -8,6 +21,7 @@ step "Approve Production Release" {
             Octopus.Action.Manual.BlockConcurrentDeployments = "True"
             Octopus.Action.Manual.Instructions = "Please provide approval notes."
             Octopus.Action.Manual.ResponsibleTeamIds = "Demo Presenters"
+            Octopus.Action.RunOnServer = "false"
         }
         worker_pool_variable = ""
     }
@@ -23,7 +37,6 @@ step "Deploy Database Changes" {
             Octopus.Action.Package.DownloadOnTentacle = "False"
             Octopus.Action.Package.FeedId = "Azure DevOps Artifacts"
             Octopus.Action.Package.PackageId = "OctoFX.Database"
-            Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptFileName = "Deploy.ps1"
             Octopus.Action.Script.ScriptSource = "Package"
         }
@@ -54,6 +67,7 @@ step "Deploy Rate Service" {
             Octopus.Action.Package.DownloadOnTentacle = "False"
             Octopus.Action.Package.FeedId = "Azure DevOps Artifacts"
             Octopus.Action.Package.PackageId = "OctoFX.RateService"
+            Octopus.Action.RunOnServer = "false"
             Octopus.Action.WindowsService.CreateOrUpdateService = "True"
             Octopus.Action.WindowsService.Description = "OctoFX Rate Service"
             Octopus.Action.WindowsService.DesiredStatus = "Default"
@@ -86,7 +100,6 @@ step "Deploy Trading Site" {
         action_type = "Octopus.Script"
         environments = ["Production"]
         properties = {
-            Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptBody = "Write-Host \"Removing from load balancer\""
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "PowerShell"
@@ -118,6 +131,7 @@ step "Deploy Trading Site" {
             Octopus.Action.Package.DownloadOnTentacle = "False"
             Octopus.Action.Package.FeedId = "Azure DevOps Artifacts"
             Octopus.Action.Package.PackageId = "OctoFX.TradingWebsite"
+            Octopus.Action.RunOnServer = "false"
         }
         worker_pool_variable = ""
 
@@ -134,7 +148,6 @@ step "Deploy Trading Site" {
     action "Smoke Test Trading Site" {
         action_type = "Octopus.Script"
         properties = {
-            Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptBody = <<-EOT
                 $URI = $OctopusParameters["OctoFX.TradingSite.Url"]
                 Invoke-WebRequest -URI "${URI}" -UseBasicParsing
@@ -151,7 +164,6 @@ step "Deploy Trading Site" {
         action_type = "Octopus.Script"
         environments = ["Production"]
         properties = {
-            Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptBody = "Write-Host \"Adding to load balancer\""
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "PowerShell"
@@ -170,6 +182,7 @@ step "Email Managers" {
             Octopus.Action.Email.IsHtml = "True"
             Octopus.Action.Email.Subject = "Release #{Octopus.Release.Number} has been deployed to #{Octopus.Environment.Name}"
             Octopus.Action.Email.ToTeamIds = "Octopus Managers"
+            Octopus.Action.RunOnServer = "false"
         }
         worker_pool_variable = ""
     }
