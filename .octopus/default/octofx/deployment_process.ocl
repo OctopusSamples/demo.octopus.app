@@ -90,12 +90,11 @@ step "Deploy Trading Site" {
             Octopus.Action.Azure.AccountId = "Demo Subscription"
             Octopus.Action.Script.ScriptBody = <<-EOT
                 $resourceGroup = "demo.octopus.app"
-                $loadBalancer = "demo-loadbalancer"
-                $pool = "octofx-web-production"
-                $ip = $OctopusParameters["Octopus.Machine.Name"] + "-ip"
+                $addressPool = "octofx-web-production"
+                $ipConfig = "ipconfig1"
+                $nic = $OctopusParameters["OctoFX.Nic"]
                 
-                
-                az network lb address-pool address remove -g $resourceGroup --lb-name $loadBalancer --pool-name $pool -n $ip
+                az network nic ip-config address-pool remove -g $resourceGroup --address-pool $addressPool --ip-config-name $ipConfig --nic-name $nic
             EOT
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "PowerShell"
@@ -191,12 +190,11 @@ step "Deploy Trading Site" {
             Octopus.Action.Azure.AccountId = "Demo Subscription"
             Octopus.Action.Script.ScriptBody = <<-EOT
                 $resourceGroup = "demo.octopus.app"
-                $loadBalancer = "demo-loadbalancer"
-                $pool = "octofx-web-production"
-                $ip = $OctopusParameters["Octopus.Machine.Name"] + "-ip"
+                $addressPool = "octofx-web-production"
+                $ipConfig = "ipconfig1"
+                $nic = $OctopusParameters["OctoFX.Nic"]
                 
-                
-                az network lb address-pool address add -g $resourceGroup --lb-name $loadBalancer --pool-name $pool -n $ip
+                az network nic ip-config address-pool add -g $resourceGroup --address-pool $addressPool --ip-config-name $ipConfig --nic-name $nic
             EOT
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "PowerShell"
