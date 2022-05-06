@@ -92,7 +92,7 @@ step "Deploy Trading Site" {
                 $resourceGroup = "demo.octopus.app"
                 $addressPool = "octofx-web-production"
                 $ipConfig = "ipconfig1"
-                $nic = $OctopusParameters["OctoFX.Nic"]
+                $nic = $OctopusParameters["OctoFX.VM.Nic"]
                 
                 az network nic ip-config address-pool remove -g $resourceGroup --address-pool $addressPool --ip-config-name $ipConfig --nic-name $nic
             EOT
@@ -192,7 +192,7 @@ step "Deploy Trading Site" {
                 $resourceGroup = "demo.octopus.app"
                 $addressPool = "octofx-web-production"
                 $ipConfig = "ipconfig1"
-                $nic = $OctopusParameters["OctoFX.Nic"]
+                $nic = $OctopusParameters["OctoFX.VM.Nic"]
                 
                 az network nic ip-config address-pool add -g $resourceGroup --address-pool $addressPool --ip-config-name $ipConfig --nic-name $nic
             EOT
