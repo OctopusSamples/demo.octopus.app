@@ -83,6 +83,32 @@ step "Deploy Trading Site" {
         Octopus.Action.TargetRoles = "octofx-web"
     }
 
+    action "Remove from Azure Load Balancer" {
+        action_type = "Octopus.AzurePowerShell"
+        environments = ["Production"]
+        properties = {
+            Octopus.Action.Azure.AccountId = "Demo Subscription"
+            Octopus.Action.Script.ScriptBody = <<-EOT
+                $resourceGroup = "demo.octopus.app"
+                $loadBalancer = "demo-loadbalancer"
+                $pool = "octofx-web-production"
+                $ip = $OctopusParameters["Octopus.Machine.Name"] + "-ip"
+                
+                
+                az network lb address-pool address remove -g $resourceGroup --lb-name $loadBalancer --pool-name $pool -n $ip
+            EOT
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool = "Hosted Ubuntu"
+
+        container {
+            feed = "Docker Hub"
+            image = "octopusdeploy/worker-tools:3.3.2-ubuntu.18.04"
+        }
+    }
+
     action "Remove from Load Balancer" {
         action_type = "Octopus.Script"
         environments = ["Production"]
@@ -156,6 +182,32 @@ step "Deploy Trading Site" {
             Octopus.Action.Script.Syntax = "PowerShell"
         }
         worker_pool_variable = "OctoFX.WorkerPool"
+    }
+
+    action "Add to Azure Load Balancer" {
+        action_type = "Octopus.AzurePowerShell"
+        environments = ["Production"]
+        properties = {
+            Octopus.Action.Azure.AccountId = "Demo Subscription"
+            Octopus.Action.Script.ScriptBody = <<-EOT
+                $resourceGroup = "demo.octopus.app"
+                $loadBalancer = "demo-loadbalancer"
+                $pool = "octofx-web-production"
+                $ip = $OctopusParameters["Octopus.Machine.Name"] + "-ip"
+                
+                
+                az network lb address-pool address add -g $resourceGroup --lb-name $loadBalancer --pool-name $pool -n $ip
+            EOT
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool = "Hosted Ubuntu"
+
+        container {
+            feed = "Docker Hub"
+            image = "octopusdeploy/worker-tools:3.3.2-ubuntu.18.04"
+        }
     }
 }
 
