@@ -248,21 +248,9 @@ step "upgrade-a-helm-chart" {
         properties = {
             Octopus.Action.Helm.ClientVersion = "V3"
             Octopus.Action.Helm.ResetValues = "True"
-            Octopus.Action.Package.DownloadOnTentacle = "False"
-            Octopus.Action.Package.FeedId = "bitnami-helm"
-            Octopus.Action.Package.PackageId = "mysql"
             Octopus.Action.RunOnServer = "false"
         }
         worker_pool_variable = ""
-
-        packages {
-            acquisition_location = "Server"
-            feed = "bitnami-helm"
-            package_id = "mysql"
-            properties = {
-                SelectionMode = "immediate"
-            }
-        }
 
         packages "octopusdeploy-container" {
             acquisition_location = "NotAcquired"
