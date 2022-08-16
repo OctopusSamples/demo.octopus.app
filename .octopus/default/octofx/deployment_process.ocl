@@ -251,6 +251,7 @@ step "upgrade-a-helm-chart" {
             Octopus.Action.Package.DownloadOnTentacle = "False"
             Octopus.Action.Package.FeedId = "bitnami-helm"
             Octopus.Action.Package.PackageId = "mysql"
+            Octopus.Action.RunOnServer = "false"
         }
         worker_pool_variable = ""
 
@@ -263,7 +264,7 @@ step "upgrade-a-helm-chart" {
             }
         }
 
-        packages "octopusdeploy" {
+        packages "octopusdeploy-container" {
             acquisition_location = "NotAcquired"
             feed = "docker-hub"
             package_id = "octopusdeploy/octopusdeploy"
