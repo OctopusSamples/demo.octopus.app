@@ -236,3 +236,42 @@ step "email-managers" {
         worker_pool_variable = ""
     }
 }
+
+step "upgrade-a-helm-chart" {
+    name = "Upgrade a Helm Chart"
+    properties = {
+        Octopus.Action.TargetRoles = "octofx-web"
+    }
+
+    action {
+        action_type = "Octopus.HelmChartUpgrade"
+        properties = {
+            Octopus.Action.Helm.ClientVersion = "V3"
+            Octopus.Action.Helm.ResetValues = "True"
+            Octopus.Action.Package.DownloadOnTentacle = "False"
+            Octopus.Action.Package.FeedId = "bitnami-helm"
+            Octopus.Action.Package.PackageId = "mysql"
+        }
+        worker_pool_variable = ""
+
+        packages {
+            acquisition_location = "Server"
+            feed = "bitnami-helm"
+            package_id = "mysql"
+            properties = {
+                SelectionMode = "immediate"
+            }
+        }
+
+        packages "octopusdeploy" {
+            acquisition_location = "NotAcquired"
+            feed = "docker-hub"
+            package_id = "octopusdeploy/octopusdeploy"
+            properties = {
+                Extract = "False"
+                Purpose = "DockerImageReference"
+                SelectionMode = "immediate"
+            }
+        }
+    }
+}
